@@ -1,0 +1,6 @@
+*.html
+*.b64
+*.bsp
+
+.venv
+__pycache__
