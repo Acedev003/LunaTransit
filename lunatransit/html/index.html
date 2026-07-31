@@ -15,11 +15,15 @@
     .parent {
         display: flex;
         flex-direction: column;
-        height: 100vh; /* Or any defined height like 500px */
+        height: 100vh; 
     }
 
     .header {
-      height: 40px; /* Can be any fixed or dynamic height */
+        height: 40px; 
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        flex-shrink: 0;
     }
 
     .map {
