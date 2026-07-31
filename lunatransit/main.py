@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from starlette.responses import FileResponse
 from contextlib import asynccontextmanager
 
-from .routers import folium_map
+from .routers import flight_map
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
@@ -12,7 +12,7 @@ async def lifespan(_app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(folium_map.router)
+app.include_router(flight_map.router)
 
 @app.get("/")
 async def main():
