@@ -2,40 +2,151 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Essential Mobile Viewport Tag -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Web Page</title>
+    <title>Luna Transit</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevents scrollbars from full-screen iframe */
+        }
+
+        .parent {
+            position: relative; /* Sets boundary context for absolute header */
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            z-index: 1000;
+            
+            /* Overlay pointer-events fix */
+            background-color: transparent;
+            pointer-events: none; /* Map interactions pass through empty areas */
+            
+            /* Right alignment flexbox */
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 12px;
+            box-sizing: border-box; /* Prevents 100% width + padding overflow */
+        }
+
+        /* Re-enable clicks specifically for header controls */
+        .header * {
+            pointer-events: auto;
+            margin-left: 8px; /* Adds space between the buttons */
+        }
+
+        .map {
+            width: 100%;
+            height: 100%;
+            border: none; /* Removes default iframe border */
+        }
+
+        dialog div {
+            margin-top: 6px;
+        }
+
+    </style>
 </head>
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    .parent {
-        display: flex;
-        flex-direction: column;
-        height: 100vh; 
-    }
-
-    .header {
-        height: 40px; 
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        flex-shrink: 0;
-    }
-
-    .map {
-      flex-grow: 1; 
-      width: 100%;
-      height: 100%;
-    }
-</style>
 <body class="parent">
+    <dialog id="dialog">
+        <div>
+            <label>Callsign:<br>
+                <input type="text" id="callsign" name="callsign" required />
+            </label>
+        </div>
+        <div>
+            <label>Probe Delay:<br>
+                <select id="probe_delay" name="probe_delay" required>
+                    <option value="0.5">30s</option>
+                    <option value="1">1min</option>
+                    <option value="2">2min</option>
+                    <option value="5">5min</option>
+                </select>
+            </label>
+        </div>
+        <div>
+            <label>Transit Target:<br>
+                <select id="transit_target" name="transit_target" required>
+                    <option value="moon">Moon</option>
+                    <option value="sun">Sun</option>
+                </select>
+            </label>    
+        </div>
+        <div>
+            <label>Track Len (meters):<br>
+                <input type="number" id="track_len" name="track_len" required />
+            </label>
+        </div>
+        <div>
+            <label>Track Time Delta:<br>
+                <select id="track_delta" name="track_delta" required>
+                    <option value="0.5">30s</option>
+                    <option value="1">1min</option>
+                    <option value="2">2min</option>
+                    <option value="5">5min</option>
+                    <option value="10">10min</option>
+                </select>
+            </label>
+        </div>
+        <div>
+            <label>Test Offset Hours:<br>
+                <input type="number" min="0" max="24" id="debug_offset" name="debug_offset" required />
+            </label>
+        </div>
+        <br>
+        <button id="update_close">Update</button>
+    </dialog>
     <div class="header">
-        <button></button>
+        <button id="setdata">Set Data</button>
+        <button>Calculate</button>
     </div>
     <iframe src="/map" class="map"></iframe>
+    <script>
+        dialog  = document.getElementById("dialog");
+        dat_btn = document.getElementById("setdata");
+        cls_btn = document.getElementById("update_close");
+
+        inp_callsign       = document.getElementById("callsign");
+        inp_probe_delay    = document.getElementById("probe_delay");
+        inp_transit_target = document.getElementById("transit_target");
+        inp_track_len      = document.getElementById("track_len");
+        inp_track_delta    = document.getElementById("track_delta");
+        inp_debug_offset   = document.getElementById("debug_offset");
+        
+        let callsign       = null;      // str
+        let probe_delay    = 0.5;       // mins
+        let transit_target = "moon";    // moon, sun
+        let track_len      = 2000e3;    // meters
+        let track_delta    = 1;         // mins
+        let debug_offset   = 0;         // hours
+
+        dat_btn.onclick = () => {
+            inp_callsign.value       = callsign;
+            inp_probe_delay.value    = probe_delay;
+            inp_transit_target.value = transit_target;
+            inp_track_len.value      = track_len;
+            inp_track_delta.value    = track_delta;
+            inp_debug_offset.value   = debug_offset;
+            dialog.showModal()
+        };
+        
+        cls_btn.onclick = () => {
+            callsign       = inp_callsign.value;
+            probe_delay    = inp_probe_delay.value;
+            transit_target = inp_transit_target.value;
+            track_len      = inp_track_len.value;
+            track_delta    = inp_track_delta.value;
+            debug_offset   = inp_debug_offset.value;
+            dialog.close()
+        };
+    </script>
 </body>
 </html>
