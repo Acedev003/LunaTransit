@@ -112,6 +112,7 @@ def calc_shadow_point(
         lat  = observer_lat,
         lon  = observer_lon,
         alt  = observer_alt,
+        azi  = moon_az,
         size = approx_targ_size
     )
 

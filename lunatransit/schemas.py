@@ -41,4 +41,5 @@ class TargetShadowPoint:
     lat  : float
     lon  : float
     alt  : float
+    azi  : float
     size : float
