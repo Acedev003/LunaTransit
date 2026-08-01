@@ -128,7 +128,7 @@ def calculate(
     
     callsign    = calc_request_data.callsign
     probe_delay = int(calc_request_data.probe_delay * 60)
-    track_len   = calc_request_data.track_len
+    track_len   = calc_request_data.track_len * 1000
     track_delta = int(calc_request_data.track_delta * 60)
 
     start_waypoint = estimate_flight_track_fr(
