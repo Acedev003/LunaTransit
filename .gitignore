@@ -1,5 +1,7 @@
 *.b64
 *.bsp
 
+.env
 .venv
 __pycache__
+misc/

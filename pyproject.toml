@@ -7,5 +7,9 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard]>=0.141.1",
     "folium>=0.20.0",
+    "fr24sdk>=0.3.1",
+    "geographiclib>=2.1",
+    "pydantic-settings>=2.14.2",
+    "skyfield>=1.54",
     "uvicorn[standard]>=0.52.0",
 ]
