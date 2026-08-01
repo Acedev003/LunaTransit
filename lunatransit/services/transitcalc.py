@@ -5,6 +5,7 @@ import traceback
 import srtm
 
 from folium import Map
+from fastapi import Request
 from skyfield.api import wgs84, Distance
 from skyfield.timelib import Timescale
 from global_land_mask import globe
@@ -115,10 +116,10 @@ def calc_shadow_point(
     )
 
 def calculate(
+        request: Request,
         calc_request_data: CalculationRequest,
         wgs84_geod: Geodesic,
         fr_client: Client,
-        folium_map: Map,
         target_eph,
         earth_eph,
         timescale: Timescale,
@@ -167,4 +168,4 @@ def calculate(
         print("=" * 60)
         raise e
 
-    render_map(folium_map, flight_waypoints_filtered, moon_observation_points)
+    render_map(request, flight_waypoints_filtered, moon_observation_points)

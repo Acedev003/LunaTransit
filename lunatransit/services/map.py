@@ -1,90 +1,81 @@
 import folium
-
+from fastapi import Request
+from ..dependencies import create_fresh_map
 from ..schemas import FlightWaypoint, TargetShadowPoint
 
 def render_map(
-    map_obj: folium.Map,
+    request: Request,
     waypoints: list[FlightWaypoint],
     moon_shadows: list[TargetShadowPoint | None] | None = None
 ) -> folium.Map:
     
-    if not waypoints:
-        return map_obj
+    # 1. Instantiate a fresh map instance
+    new_map = create_fresh_map()
 
-    # 1. Retain only TileLayers and explicit Leaflet controls/headers 
-    # to avoid wiping the base map tiles or breaking Leaflet JS references.
-    tile_children = {
-        key: child for key, child in map_obj._children.items()
-        if isinstance(child, folium.TileLayer) or key.startswith("tile_layer")
-    }
-    map_obj._children = tile_children
+    if waypoints:
+        # Draw flight lines
+        flight_coords = [[wp.lat, wp.lon] for wp in waypoints]
+        folium.PolyLine(
+            locations=flight_coords,
+            color="blue",
+            weight=3,
+            opacity=0.7
+        ).add_to(new_map)
 
-    # 2. Extract flight path coordinates and draw flight PolyLine
-    flight_coords = [[wp.lat, wp.lon] for wp in waypoints]
-    folium.PolyLine(
-        locations=flight_coords,
-        color="blue",
-        weight=3,
-        opacity=0.7
-    ).add_to(map_obj)
-
-    # 3. Add flight waypoint markers
-    for wp in waypoints:
-        popup_text = f"Time: {wp.time.strftime('%Y-%m-%d %H:%M:%S')}<br><a href='https://maps.google.com/?q={wp.lat},{wp.lon}' target='_blank'>Google Maps</a>"
-        folium.CircleMarker(
-            location=[wp.lat, wp.lon],
-            popup=folium.Popup(html=popup_text, max_width=300),
-            radius=5,
-            fill=True,
-            color="Red",
-            fill_color="red"
-        ).add_to(map_obj)
-
-    # 4. Handle moon shadow points and lines
-    all_bounds_coords = list(flight_coords)
-
-    if moon_shadows is not None:
-        valid_shadow_coords = []
-
-        for wp, shadow in zip(waypoints, moon_shadows):
-            if shadow is None:
-                continue
-
-            shadow_lat, shadow_lon = shadow.lat, shadow.lon
-            valid_shadow_coords.append([shadow_lat, shadow_lon])
-            all_bounds_coords.append([shadow_lat, shadow_lon])
-
-            # Popup for moon shadow point
-            popup_text = f"Moon shadow @ {wp.time.strftime('%Y-%m-%d %H:%M:%S')}<br><a href='https://maps.google.com/?q={shadow_lat},{shadow_lon}' target='_blank'>Google Maps</a>"
+        # Draw waypoint markers
+        for wp in waypoints:
+            popup_text = f"Time: {wp.time.strftime('%Y-%m-%d %H:%M:%S')}<br><a href='https://maps.google.com/?q={wp.lat},{wp.lon}' target='_blank'>Google Maps</a>"
             folium.CircleMarker(
-                location=[shadow_lat, shadow_lon],
+                location=[wp.lat, wp.lon],
                 popup=folium.Popup(html=popup_text, max_width=300),
                 radius=5,
                 fill=True,
-                color="Purple",
-                fill_color="purple"
-            ).add_to(map_obj)
+                color="Red",
+                fill_color="red"
+            ).add_to(new_map)
 
-            # Dashed line connecting flight position to its corresponding moon shadow point
-            folium.PolyLine(
-                locations=[[wp.lat, wp.lon], [shadow_lat, shadow_lon]],
-                color="gray",
-                weight=1,
-                opacity=0.5,
-                dash_array="5,5"
-            ).add_to(map_obj)
+        all_bounds_coords = list(flight_coords)
 
-        # 5. Draw connecting line along all sequential moon shadow points
-        if len(valid_shadow_coords) > 1:
-            folium.PolyLine(
-                locations=valid_shadow_coords,
-                color="purple",
-                weight=2,
-                opacity=0.8
-            ).add_to(map_obj)
+        if moon_shadows is not None:
+            valid_shadow_coords = []
 
-    # 6. Fit map camera bounds to contain all waypoints and shadow positions
-    if all_bounds_coords:
-        map_obj.fit_bounds(all_bounds_coords)
+            for wp, shadow in zip(waypoints, moon_shadows):
+                if shadow is None:
+                    continue
 
-    return map_obj
+                shadow_lat, shadow_lon = shadow.lat, shadow.lon
+                valid_shadow_coords.append([shadow_lat, shadow_lon])
+                all_bounds_coords.append([shadow_lat, shadow_lon])
+
+                popup_text = f"Moon shadow @ {wp.time.strftime('%Y-%m-%d %H:%M:%S')}<br><a href='https://maps.google.com/?q={shadow_lat},{shadow_lon}' target='_blank'>Google Maps</a>"
+                folium.CircleMarker(
+                    location=[shadow_lat, shadow_lon],
+                    popup=folium.Popup(html=popup_text, max_width=300),
+                    radius=5,
+                    fill=True,
+                    color="Purple",
+                    fill_color="purple"
+                ).add_to(new_map)
+
+                folium.PolyLine(
+                    locations=[[wp.lat, wp.lon], [shadow_lat, shadow_lon]],
+                    color="gray",
+                    weight=1,
+                    opacity=0.5,
+                    dash_array="5,5"
+                ).add_to(new_map)
+
+            if len(valid_shadow_coords) > 1:
+                folium.PolyLine(
+                    locations=valid_shadow_coords,
+                    color="purple",
+                    weight=2,
+                    opacity=0.8
+                ).add_to(new_map)
+
+        if all_bounds_coords:
+            new_map.fit_bounds(all_bounds_coords)
+
+    # 2. Update the FastAPI application state with the fresh map
+    request.app.state.map = new_map
+    return new_map

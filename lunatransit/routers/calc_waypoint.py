@@ -36,10 +36,10 @@ async def start_calculation(
     request.app.state.calc_task = asyncio.create_task(
         asyncio.to_thread(
             calculate,
+            request,
             calc_request,
             request.app.state.geod,
             request.app.state.fr24client,
-            request.app.state.map,
             target_eph,
             request.app.state.earth_eph,
             request.app.state.timescale,
