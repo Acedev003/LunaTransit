@@ -91,7 +91,7 @@ def get_timed_waypoints(
             FlightWaypoint(
                 time = current_time,
                 lat  = pos['lat2'],
-                lon  = pos['long2'],
+                lon  = pos['lon2'],
                 alt  = start_alt,
                 azi  = pos['azi2'],
                 speed = start_speed

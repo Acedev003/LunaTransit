@@ -11,7 +11,7 @@ dependencies = [
     "geographiclib>=2.1",
     "global-land-mask>=1.0.0",
     "pydantic-settings>=2.14.2",
-    "pyhigh>=0.0.6",
     "skyfield>=1.54",
+    "srtm-py>=0.3.7",
     "uvicorn[standard]>=0.52.0",
 ]

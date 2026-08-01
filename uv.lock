@@ -478,8 +478,8 @@ dependencies = [
     { name = "geographiclib" },
     { name = "global-land-mask" },
     { name = "pydantic-settings" },
-    { name = "pyhigh" },
     { name = "skyfield" },
+    { name = "srtm-py" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -491,8 +491,8 @@ requires-dist = [
     { name = "geographiclib", specifier = ">=2.1" },
     { name = "global-land-mask", specifier = ">=1.0.0" },
     { name = "pydantic-settings", specifier = ">=2.14.2" },
-    { name = "pyhigh", specifier = ">=0.0.6" },
     { name = "skyfield", specifier = ">=1.54" },
+    { name = "srtm-py", specifier = ">=0.3.7" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.52.0" },
 ]
 
@@ -763,16 +763,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pyhigh"
-version = "0.0.6"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "numpy" },
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/db/8b/f8101acb032d7a9c1bd5023678831ff04edaf2d42ad78d0deca1b89ed805/pyhigh-0.0.6.tar.gz", hash = "sha256:e10df65fc0ca79a57cb8f0cb10b4a6fefa19b2c4e5d28a1c46cb6b4e37f48be8", size = 5535, upload-time = "2024-08-23T03:51:19.622Z" }
-
-[[package]]
 name = "python-dotenv"
 version = "1.2.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1003,6 +993,15 @@ sdist = { url = "https://files.pythonhosted.org/packages/c9/8c/98bf5d9042218580f
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e7/8a/f196038b2bea40c372d900803dac0d5e4eab578cb05b92ff7172ced4c1cf/skyfield-1.54-py3-none-any.whl", hash = "sha256:c9b313185448963ea7fa4cf8e4298ba028b179b80ebd4c5675497519f21c04a2", size = 370380, upload-time = "2026-01-18T19:16:13.806Z" },
 ]
+
+[[package]]
+name = "srtm-py"
+version = "0.3.7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e6/07/1dc35011d5e68b6c873632fe07a517a1ad484bf4757ae4736320c4cab8ef/SRTM.py-0.3.7.tar.gz", hash = "sha256:38c8ba9900751cdc9e7f6d91af1a339cc4a8e2fcb7482c6d613fd3dc6c5d8c4c", size = 99899, upload-time = "2021-02-27T11:08:08.104Z" }
 
 [[package]]
 name = "starlette"

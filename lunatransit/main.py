@@ -4,6 +4,7 @@ App Entrypoint
 
 from contextlib import asynccontextmanager
 
+import srtm
 import folium
 import asyncio
 
@@ -32,7 +33,8 @@ async def lifespan(_app: FastAPI):
     _app.state.moon_eph = ephemeris['moon']
     _app.state.timescale = load.timescale()
 
-    # Replaced process with task
+    _app.state.elevation_data = srtm.get_data()
+
     _app.state.calc_task: asyncio.Task | None = None
     _app.state.fr24client = Client(api_token=settings.fr24_api_token)
 

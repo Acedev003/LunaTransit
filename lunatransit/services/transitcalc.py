@@ -1,8 +1,10 @@
 import math
 import datetime
+import traceback
+
+import srtm
 
 from folium import Map
-from pyhigh import get_elevation
 from skyfield.api import wgs84, Distance
 from skyfield.timelib import Timescale
 from global_land_mask import globe
@@ -45,6 +47,14 @@ def exact_geocentric_arc(h: float, elevation_deg: float, R_EARTH: int) -> float 
     theta = alpha + beta - (math.pi / 2)
     return R_EARTH * theta
 
+def safe_get_elevation(lat: float, lon: float, elevation_data: srtm.mod_main.mod_data.GeoElevationData) -> float:
+    try:
+        alt = elevation_data.get_elevation(lat, lon)
+        return float(alt) if alt is not None else 0.0
+    except Exception as e:
+        print(f"SRTM lookup error at ({lat}, {lon}): {e}")
+        return 0.0
+
 def calc_shadow_point(
         plane_lat: float,
         plane_lon: float,
@@ -54,6 +64,7 @@ def calc_shadow_point(
         date_utc: datetime.datetime,
         timescale: Timescale,
         wgs84_geod: Geodesic,
+        elevation_data: srtm.mod_main.mod_data.GeoElevationData
     ) -> TargetShadowPoint | None:
 
     observation_time = timescale.from_datetime(date_utc)
@@ -77,39 +88,22 @@ def calc_shadow_point(
 
     observer_lat = g['lat2']
     observer_lon = g['lon2']
-    observer_alt = get_elevation(observer_lat,observer_lon)
-    if observer_alt is None:
-        observer_alt = 0.0
+    observer_alt = safe_get_elevation(observer_lat,observer_lon,elevation_data)
 
-    # point_A = wgs84.latlon(
-    #                 latitude_degrees=observer_lat,
-    #                 longitude_degrees=observer_lon,
-    #                 elevation_m=observer_alt,
-    #           ).at(observation_time).position.meters
-    # point_B = wgs84.latlon(
-    #                 latitude_degrees=plane_lat,
-    #                 longitude_degrees=plane_lon,
-    #                 elevation_m=plane_alt,
-    #           ).at(observation_time).position.meters
+    point_A = wgs84.latlon(
+                    latitude_degrees=observer_lat,
+                    longitude_degrees=observer_lon,
+                    elevation_m=observer_alt,
+              ).at(observation_time).position.m
+    point_B = wgs84.latlon(
+                    latitude_degrees=plane_lat,
+                    longitude_degrees=plane_lon,
+                    elevation_m=plane_alt,
+              ).at(observation_time).position.m
 
-    # ray_vector = point_B - point_A
-    # distance_m = math.sqrt(sum(c**2 for c in ray_vector))
-    # approx_targ_size = distance_m / 100.0
-
-    pos_A = wgs84.latlon(
-        latitude_degrees=observer_lat,
-        longitude_degrees=observer_lon,
-        elevation_m=observer_alt,
-    ).at(observation_time)
-
-    pos_B = wgs84.latlon(
-        latitude_degrees=plane_lat,
-        longitude_degrees=plane_lon,
-        elevation_m=plane_alt,
-    ).at(observation_time)
-
-    # Skyfield subtraction yields a displacement vector object whose distance can be read directly
-    distance_m = (pos_B - pos_A).distance().m
+    ray_vector = point_B - point_A
+    vec_magnitude = (ray_vector ** 2).sum() ** 0.5
+    distance_m = Distance(m=vec_magnitude).m
     approx_targ_size = distance_m / 100.0
 
     return TargetShadowPoint(
@@ -127,7 +121,8 @@ def calculate(
         folium_map: Map,
         target_eph,
         earth_eph,
-        timescale: Timescale
+        timescale: Timescale,
+        elevation_data: srtm.mod_main.mod_data.GeoElevationData
     ) -> None:
     
     callsign    = calc_request_data.callsign
@@ -151,7 +146,8 @@ def calculate(
 
     flight_waypoints_filtered = [flight_waypoints[0]] + filter_nearland_waypoints(flight_waypoints[1:])
 
-    moon_observation_points = [
+    try:
+        moon_observation_points = [
         calc_shadow_point(
             waypoint.lat,
             waypoint.lon,
@@ -160,8 +156,15 @@ def calculate(
             earth_eph,
             waypoint.time,
             timescale,
-            wgs84_geod
+            wgs84_geod,
+            elevation_data
         ) for waypoint in flight_waypoints_filtered
     ]
+    except Exception as e:
+        print("=" * 60)
+        print("ERROR INSIDE SHADOW POINT CALCULATION:")
+        traceback.print_exc()  # <--- Prints the exact line & error to standard error
+        print("=" * 60)
+        raise e
 
     render_map(folium_map, flight_waypoints_filtered, moon_observation_points)

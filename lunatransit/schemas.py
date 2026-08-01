@@ -35,6 +35,7 @@ class FlightWaypoint:
     azi  : float
     speed: float
 
+@dataclass
 class TargetShadowPoint:
     time : datetime.datetime
     lat  : float

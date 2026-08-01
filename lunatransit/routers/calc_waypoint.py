@@ -43,6 +43,7 @@ async def start_calculation(
             target_eph,
             request.app.state.earth_eph,
             request.app.state.timescale,
+            request.app.state.elevation_data
         )
     )
 
