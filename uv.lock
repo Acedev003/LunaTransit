@@ -353,6 +353,15 @@ wheels = [
 ]
 
 [[package]]
+name = "global-land-mask"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6e/cd/d06fe252cbe41b85c7a1a54e4d4214c79b770eb5d6c6fa3b03e56371a6da/global-land-mask-1.0.0.tar.gz", hash = "sha256:956bf02e8b05bfc9f3a29cbc6e97d5ba4151c0732504acc73c2db9ea325ecff3", size = 1825546, upload-time = "2020-10-05T13:15:30.119Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e6/e9/eaac67e39b68f64828a164f8dbfcf13baccd7382704ea120152af475f520/global_land_mask-1.0.0-py3-none-any.whl", hash = "sha256:07751fbb4e3834ee508a84ea64d9bd5340fbd0a8c951e24b43c323fcc670bb62", size = 1836944, upload-time = "2020-10-05T13:15:20.322Z" },
+]
+
+[[package]]
 name = "h11"
 version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -467,7 +476,9 @@ dependencies = [
     { name = "folium" },
     { name = "fr24sdk" },
     { name = "geographiclib" },
+    { name = "global-land-mask" },
     { name = "pydantic-settings" },
+    { name = "pyhigh" },
     { name = "skyfield" },
     { name = "uvicorn", extra = ["standard"] },
 ]
@@ -478,7 +489,9 @@ requires-dist = [
     { name = "folium", specifier = ">=0.20.0" },
     { name = "fr24sdk", specifier = ">=0.3.1" },
     { name = "geographiclib", specifier = ">=2.1" },
+    { name = "global-land-mask", specifier = ">=1.0.0" },
     { name = "pydantic-settings", specifier = ">=2.14.2" },
+    { name = "pyhigh", specifier = ">=0.0.6" },
     { name = "skyfield", specifier = ">=1.54" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.52.0" },
 ]
@@ -748,6 +761,16 @@ sdist = { url = "https://files.pythonhosted.org/packages/c3/b2/bc9c9196916376152
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f4/7e/a72dd26f3b0f4f2bf1dd8923c85f7ceb43172af56d63c7383eb62b332364/pygments-2.20.0-py3-none-any.whl", hash = "sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176", size = 1231151, upload-time = "2026-03-29T13:29:30.038Z" },
 ]
+
+[[package]]
+name = "pyhigh"
+version = "0.0.6"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/db/8b/f8101acb032d7a9c1bd5023678831ff04edaf2d42ad78d0deca1b89ed805/pyhigh-0.0.6.tar.gz", hash = "sha256:e10df65fc0ca79a57cb8f0cb10b4a6fefa19b2c4e5d28a1c46cb6b4e37f48be8", size = 5535, upload-time = "2024-08-23T03:51:19.622Z" }
 
 [[package]]
 name = "python-dotenv"

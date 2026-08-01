@@ -1,6 +1,5 @@
 import datetime
 from enum import Enum
-from typing import Literal
 from dataclasses import dataclass
 from pydantic import BaseModel, Field
 
@@ -36,7 +35,9 @@ class FlightWaypoint:
     azi  : float
     speed: float
 
-class MoonShadowPoint:
+class TargetShadowPoint:
     time : datetime.datetime
     lat  : float
     lon  : float
+    alt  : float
+    size : float
