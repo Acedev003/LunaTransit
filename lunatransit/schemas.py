@@ -1,5 +1,20 @@
 import datetime
+from enum import Enum
+from typing import Literal
 from dataclasses import dataclass
+from pydantic import BaseModel, Field
+
+class TransitTarget(str,Enum):
+    MOON = "moon"
+    SUN  = "sun"
+
+class CalculationRequest(BaseModel):
+    callsign: str
+    probe_delay: float = Field(gt=0, description="Probe delay in mins")
+    transit_target: TransitTarget
+    track_len: int = Field(gt=0, description="Track Len in meters")
+    track_delta: float
+    debug_offset: float = 0.0
 
 @dataclass
 class FlightWaypoint:

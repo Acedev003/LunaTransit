@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 import folium
 
 from fastapi import FastAPI
+from multiprocessing import Pool
 from starlette.responses import FileResponse
 
 from skyfield.api import load
@@ -34,11 +35,13 @@ async def lifespan(_app: FastAPI):
     _app.state.moon_eph   = ephemeris['moon']
     _app.state.timescale  = load.timescale()
 
+    _app.state.pool       = Pool(processes=4)
     _app.state.fr24client = Client(api_token=settings.fr24_api_token)
 
     yield
 
     _app.state.fr24client.close()
+    _app.state.pool.close()
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(flight_map.router)
