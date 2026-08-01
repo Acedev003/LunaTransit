@@ -1,7 +1,20 @@
 import folium
+from folium import plugins
 from fastapi import Request
-from ..dependencies import create_fresh_map
+from ..config import settings
 from ..schemas import FlightWaypoint, TargetShadowPoint
+
+def create_fresh_map() -> folium.Map:
+    """Core factory function to build an unrendered map with default layers and plugins."""
+    flight_map = folium.Map(
+        location=[settings.init_lat, settings.init_lon],
+        zoom_start=settings.init_zoom_level
+    )
+    
+    # Attach location control plugin
+    plugins.LocateControl(auto_start=False).add_to(flight_map)
+    
+    return flight_map
 
 def render_map(
     request: Request,

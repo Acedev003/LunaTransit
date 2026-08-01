@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from folium import Map
 
-from ..dependencies import get_folium_map, create_fresh_map
+from ..dependencies import get_folium_map
+from ..services.map import create_fresh_map
 
 router = APIRouter(prefix="/map")
 

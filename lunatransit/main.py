@@ -5,7 +5,6 @@ App Entrypoint
 from contextlib import asynccontextmanager
 
 import srtm
-import folium
 import asyncio
 
 from fastapi import FastAPI
@@ -17,13 +16,11 @@ from geographiclib.geodesic import Geodesic
 
 from .config import settings
 from .routers import flight_map, calc_waypoint
+from .services.map import create_fresh_map
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    _app.state.map = folium.Map(
-        location=[settings.init_lat, settings.init_lon],
-        zoom_start=settings.init_zoom_level
-    )
+    _app.state.map = create_fresh_map()
     _app.state.geod = Geodesic.WGS84
 
     ephemeris = load('de421.bsp')
