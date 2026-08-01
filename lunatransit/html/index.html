@@ -106,13 +106,14 @@
     </dialog>
     <div class="header">
         <button id="setdata">Set Data</button>
-        <button>Calculate</button>
+        <button id="calc">Calculate</button>
     </div>
     <iframe src="/map" class="map"></iframe>
     <script>
-        dialog  = document.getElementById("dialog");
-        dat_btn = document.getElementById("setdata");
-        cls_btn = document.getElementById("update_close");
+        dialog   = document.getElementById("dialog");
+        dat_btn  = document.getElementById("setdata");
+        cls_btn  = document.getElementById("update_close");
+        calc_btn = document.getElementById("calc");
 
         inp_callsign       = document.getElementById("callsign");
         inp_probe_delay    = document.getElementById("probe_delay");
